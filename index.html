@@ -1143,6 +1143,58 @@
         font-size: 6px;
     }
 }    
+        /* Стили для команды Санчез */
+@keyframes sanchezBlink {
+    0%, 100% { 
+        background: linear-gradient(180deg, #ff5555, #aa0000);
+        color: white;
+    }
+    50% { 
+        background: linear-gradient(180deg, #aa0000, #550000);
+        color: #ffaaaa;
+    }
+}
+
+.sanchez-active {
+    animation: sanchezBlink 0.5s infinite !important;
+    border-color: #ff5555 !important;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.shake-effect {
+    animation: shake 0.3s ease-in-out;
+}
+
+/* Стиль для бейджа засранца */
+.reserved-badge.sanchez-badge {
+    background: linear-gradient(180deg, #ff5555, #aa0000) !important;
+    border-color: #ffaaaa !important;
+    animation: pulseGlow 1s infinite alternate;
+}
+
+@keyframes pulseGlow {
+    from { box-shadow: 0 0 5px rgba(255, 85, 85, 0.5); }
+    to { box-shadow: 0 0 15px rgba(255, 85, 85, 0.8); }
+}
+
+/* Эффект для терминала при активации */
+.terminal-container.sanchez-mode {
+    border-image: linear-gradient(45deg, #ff5555, #ffaa00, #ff5555) 1 !important;
+    background: linear-gradient(45deg, #110000, #330000, #110000) !important;
+}
+
+.terminal-container.sanchez-mode .terminal-header {
+    background: linear-gradient(to right, #550000, #aa0000, #550000) !important;
+}
+
+.terminal-container.sanchez-mode .terminal-line {
+    text-shadow: 0 0 5px rgba(255, 85, 85, 0.7) !important;
+}
     </style>
 </head>
 <body>
@@ -1707,6 +1759,106 @@
                     location.reload();
                 }
             };
+            // Эффекты для команды Санчез
+        function activateSanchezEffects() {
+            // 1. Изменение фона терминала
+            const terminal = document.querySelector('.terminal-container');
+            terminal.style.borderColor = '#ff5555';
+            terminal.style.boxShadow = '0 0 30px rgba(255, 85, 85, 0.7)';
+            
+            // 2. Анимация заголовка
+            const title = document.querySelector('.family-header');
+            const originalTitle = title.innerHTML;
+            title.innerHTML = '🎄 ВЫ - ЗАСРАНЕЦ 2024 🎁';
+            title.style.color = '#ff5555';
+            title.style.textShadow = '3px 3px 0 #000';
+            
+            // 3. Мигание кнопок бронирования
+            const reserveBtns = document.querySelectorAll('.reserve-btn');
+            let blinkCount = 0;
+            const blinkInterval = setInterval(() => {
+                reserveBtns.forEach(btn => {
+                    btn.style.background = blinkCount % 2 === 0 
+                        ? 'linear-gradient(180deg, #ff5555, #aa0000)' 
+                        : 'linear-gradient(180deg, #ff3366, #cc0033)';
+                });
+                blinkCount++;
+                
+                if (blinkCount > 10) {
+                    clearInterval(blinkInterval);
+                    reserveBtns.forEach(btn => {
+                        btn.style.background = '';
+                    });
+                }
+            }, 300);
+            
+            // 4. Специальное сообщение в статусной панели
+            const reservedList = document.getElementById('reservedList');
+            if (reservedList) {
+                const sanchezBadge = document.createElement('div');
+                sanchezBadge.className = 'reserved-badge';
+                sanchezBadge.innerHTML = `
+                    <span class="gift-number">🤡</span>
+                    СТАТУС: ЗАСРАНЕЦ
+                    <div class="reserved-by">Присвоено командой САНЧЕЗ</div>
+                `;
+                sanchezBadge.style.background = 'linear-gradient(180deg, #ff5555, #aa0000)';
+                reservedList.appendChild(sanchezBadge);
+            }
+            
+            // 5. Восстановление через 10 секунд
+            setTimeout(() => {
+                terminal.style.borderColor = '';
+                terminal.style.boxShadow = '';
+                title.innerHTML = originalTitle;
+                title.style.color = '';
+                title.style.textShadow = '';
+                
+                if (reservedList && sanchezBadge) {
+                    setTimeout(() => {
+                        sanchezBadge.style.opacity = '0';
+                        sanchezBadge.style.transition = 'opacity 1s';
+                        setTimeout(() => {
+                            if (sanchezBadge.parentNode) {
+                                sanchezBadge.parentNode.removeChild(sanchezBadge);
+                            }
+                        }, 1000);
+                    }, 5000);
+                }
+            }, 10000);
+        }
+
+        function resetSanchezEffects() {
+            const terminal = document.querySelector('.terminal-container');
+            const title = document.querySelector('.family-header');
+            
+            // Возвращаем оригинальные стили
+            terminal.style.borderColor = '#0f0';
+            terminal.style.boxShadow = '';
+            
+            // Возвращаем оригинальный заголовок (если был изменён)
+            if (title.textContent.includes('ЗАСРАНЕЦ')) {
+                title.innerHTML = '🎄 СЕМЕЙНЫЙ ВИШЛИСТ 2024 🎁';
+                title.style.color = '';
+                title.style.textShadow = '';
+            }
+            
+            // Убираем бейдж если есть
+            const sanchezBadge = document.querySelector('.reserved-badge:contains("ЗАСРАНЕЦ")');
+            if (sanchezBadge) {
+                sanchezBadge.style.transition = 'opacity 0.5s';
+                sanchezBadge.style.opacity = '0';
+                setTimeout(() => {
+                    if (sanchezBadge.parentNode) {
+                        sanchezBadge.parentNode.removeChild(sanchezBadge);
+                    }
+                }, 500);
+            }
+            
+            showStatusMessage('✨ Статусы сброшены, мир восстановлен!');
+        }
+        
+        // ===== КОНЕЦ ВСТАВКИ ДЛЯ САНЧЕЗА =====
         });
         // Анимация для приветственного сообщения
 document.addEventListener('DOMContentLoaded', function() {
@@ -1788,6 +1940,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 addTerminalLine('  CLEAR - очистить терминал', 'system');
                 addTerminalLine('  WHOAMI - информация о пользователе', 'system');
                 addTerminalLine('  SANTA - секретная команда 🎅', 'system');
+                addTerminalLine('  САНЧЕЗ - сказать Санчезу что он засранец 🤡', 'system');
+                addTerminalLine('  САМ ТАКОЙ - ответ на Санчеза (секретно)', 'system');
             }
         },
         'STATUS': {
@@ -1865,7 +2019,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 addTerminalLine('> ДЕД МОРОЗ ПРИБЫВАЕТ ЧЕРЕЗ:', 'info');
                 
                 const now = new Date();
-                const christmas = new Date(now.getFullYear(), 11, 25); // 25 декабря
+                const christmas = new Date(now.getFullYear(), 11, 31); // 25 декабря
                 if (now > christmas) {
                     christmas.setFullYear(christmas.getFullYear() + 1);
                 }
@@ -1884,7 +2038,92 @@ document.addEventListener('DOMContentLoaded', function() {
                         card.style.boxShadow = '';
                     }, 2000);
                 });
+                        'САНЧЕЗ': {
+            description: 'Сказать Санчезу что он засранец',
+            execute: () => {
+                addTerminalLine('> АКТИВАЦИЯ КОМАНДЫ "ЗАСРАНЕЦ"...', 'warning');
                 
+                // Первая задержка
+                setTimeout(() => {
+                    addTerminalLine('> ИДЁТ ПОДКЛЮЧЕНИЕ К САНЧЕЗУ...', 'system');
+                    
+                    // Вторая задержка
+                    setTimeout(() => {
+                        addTerminalLine('> 📡 УСТАНАВЛИВАЕМ СВЯЗЬ...', 'system');
+                        
+                        // Третья задержка
+                        setTimeout(() => {
+                            addTerminalLine('> ✅ Задание "Засранец" - выполнено', 'success');
+                            
+                            // Четвертая задержка с ответом
+                            setTimeout(() => {
+                                addTerminalLine('> 📨 ОТВЕТ ОТ САНЧЕЗА:', 'info');
+                                addTerminalLine('>   Санчез = Засранец отменено командой "сам такой"', 'warning');
+                                
+                                // Финальная задержка с переворотом
+                                setTimeout(() => {
+                                    addTerminalLine('> 🔄 АНАЛИЗ ОТВЕТА...', 'system');
+                                    
+                                    setTimeout(() => {
+                                        addTerminalLine('> ⚠️ ОБНАРУЖЕНА РЕКУРСИВНАЯ КОМАНДА', 'error');
+                                        
+                                        setTimeout(() => {
+                                            addTerminalLine('> 🎯 ПЕРЕНАЗНАЧЕНИЕ СТАТУСА...', 'system');
+                                            
+                                            setTimeout(() => {
+                                                addTerminalLine('> 🏆 ПОЗДРАВЛЯЕМ, ТЕПЕРЬ ВЫ "ЗАСРАНЕЦ"!', 'success');
+                                                addTerminalLine('>   (статус действителен 24 часа)', 'warning');
+                                                
+                                                // Специальные эффекты
+                                                activateSanchezEffects();
+                                                
+                                                showStatusMessage('🤡 Поздравляем с новым статусом!');
+                                                
+                                            }, 800);
+                                        }, 700);
+                                    }, 600);
+                                }, 500);
+                            }, 1500);
+                        }, 1200);
+                    }, 1000);
+                }, 800);
+            }
+        },
+        'САМ ТАКОЙ': {
+            description: 'Ответ на команду Санчеза (секретная)',
+            execute: () => {
+                addTerminalLine('> 🚫 ОШИБКА: РЕКУРСИВНОЕ ВЗАИМОДЕЙСТВИЕ', 'error');
+                addTerminalLine('> 🔄 ПЕРЕДАЧА СТАТУСА ДАЛЬШЕ...', 'warning');
+                
+                setTimeout(() => {
+                    addTerminalLine('> 👨‍💻 ПЕРЕДАНО: СОЗДАТЕЛЮ САЙТА', 'system');
+                    
+                    setTimeout(() => {
+                        addTerminalLine('> 🤖 СОЗДАТЕЛЬ: "ЧТО? КАКОЙ ЕЩЁ ЗАСРАНЕЦ?"', 'warning');
+                        
+                        setTimeout(() => {
+                            addTerminalLine('> 🔄 ПЕРЕДАЧА: ИИ-АССИСТЕНТУ', 'system');
+                            
+                            setTimeout(() => {
+                                addTerminalLine('> 🤖 ИИ: "Я ТОЛЬКО ПРОГРАММА, НЕ МОГУ БЫТЬ ЗАСРАНЦЕМ"', 'info');
+                                
+                                setTimeout(() => {
+                                    addTerminalLine('> ♾️ БЕСКОНЕЧНЫЙ ЦИКЛ ОБНАРУЖЕН', 'error');
+                                    addTerminalLine('> 💥 СИСТЕМА ВЫХОДИТ ИЗ РЕКУРСИИ', 'warning');
+                                    addTerminalLine('> 🎮 ВСЕ ЗАСРАНЦЫ ТЕПЕРЬ ДРУЗЬЯ', 'success');
+                                    
+                                    // Сброс эффектов
+                                    resetSanchezEffects();
+                                    
+                                    showStatusMessage('✨ Рекурсия прервана, все друзья!');
+                                    
+                                }, 1000);
+                            }, 900);
+                        }, 800);
+                    }, 700);
+                }, 600);
+            }
+        }
                 showStatusMessage('🎅 Хо-хо-хо! Счастливого Рождества!');
             }
         }
@@ -2040,6 +2279,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </script>
 </body>
 </html>
+
 
 
 
