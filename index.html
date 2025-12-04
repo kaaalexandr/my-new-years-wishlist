@@ -1432,7 +1432,7 @@
             
             <div class="terminal-body">
                 <div class="terminal-output" id="terminalOutput">
-                    <div class="terminal-line">> ИНИЦИАЛИЗАЦИЯ СИСТЕМЫ "СЕМЕЙНЫЙ_ВИШЛИСТ_2024.EXE"</div>
+                    <div class="terminal-line">> ИНИЦИАЛИЗАЦИЯ СИСТЕМЫ "ВИШЛИСТ_САНЧЕЗА_2026.EXE"</div>
                     <div class="terminal-line">> ЗАГРУЖЕНЫ ДАННЫЕ: 10 ПОТЕНЦИАЛЬНЫХ ПОДАРКОВ</div>
                     <div class="terminal-line">> СТАТУС БАЗЫ ДАННЫХ: <span class="status-ok">ОПЕРАТИВНА</span></div>
                     <div class="terminal-line">> РЕЖИМ БРОНИРОВАНИЯ: <span class="status-active">АКТИВИРОВАН</span></div>
@@ -1441,7 +1441,7 @@
                 </div>
                 
                 <div class="terminal-input-line">
-                    <span class="prompt">C:\family\wishlist></span>
+                    <span class="prompt">C:\sanchez\wishlist></span>
                     <input type="text" 
                            class="terminal-input" 
                            id="terminalInput" 
@@ -1769,7 +1769,7 @@
             // 2. Анимация заголовка
             const title = document.querySelector('.family-header');
             const originalTitle = title.innerHTML;
-            title.innerHTML = '🎄 ВЫ - ЗАСРАНЕЦ 2024 🎁';
+            title.innerHTML = '🎄 ВЫ - ЗАСРАНЕЦ 2026 🎁';
             title.style.color = '#ff5555';
             title.style.textShadow = '3px 3px 0 #000';
             
@@ -1838,7 +1838,7 @@
             
             // Возвращаем оригинальный заголовок (если был изменён)
             if (title.textContent.includes('ЗАСРАНЕЦ')) {
-                title.innerHTML = '🎄 СЕМЕЙНЫЙ ВИШЛИСТ 2024 🎁';
+                title.innerHTML = '🎄 МОЙ ВИШЛИСТ 2026 🎁';
                 title.style.color = '';
                 title.style.textShadow = '';
             }
@@ -2023,7 +2023,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 addTerminalLine('> ДЕД МОРОЗ ПРИБЫВАЕТ ЧЕРЕЗ:', 'info');
                 
                 const now = new Date();
-                const christmas = new Date(now.getFullYear(), 11, 25); // 25 декабря
+                const christmas = new Date(now.getFullYear(), 11, 31); // 25 декабря
                 if (now > christmas) {
                     christmas.setFullYear(christmas.getFullYear() + 1);
                 }
@@ -2396,6 +2396,7 @@ function resetSanchezEffects() {
     </script>
 </body>
 </html>
+
 
 
 
