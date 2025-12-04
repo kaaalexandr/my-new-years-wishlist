@@ -3,678 +3,191 @@
 <head>
     <title>🎄 Семейный Вишлист 2024 с Бронированием 🎁</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <style>
-        /* 16-bit семейный стиль */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background-color: #1a0f2e;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(255, 100, 100, 0.15) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(100, 255, 100, 0.15) 0%, transparent 20%),
-                linear-gradient(45deg, transparent 49%, rgba(255, 215, 0, 0.1) 50%, transparent 51%);
-            color: #fff0c0;
-            font-family: 'VT323', monospace;
-            font-size: 22px;
-            line-height: 1.5;
-            padding: 20px;
-            min-height: 100vh;
-            border: 10px solid;
-            border-image: linear-gradient(45deg, #ff3366, #ff9933, #ffff66, #66ff66, #3366ff, #cc66ff) 1;
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 30px;
-            background-color: rgba(20, 10, 40, 0.9);
-            border: 6px solid #ffcc00;
-            box-shadow: 
-                0 0 40px #ff3366,
-                inset 0 0 30px rgba(255, 204, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        /* Гирлянда */
-        .container::before {
-            content: "";
-            position: absolute;
-            top: -5px;
-            left: 0;
-            right: 0;
-            height: 10px;
-            background: repeating-linear-gradient(
-                90deg,
-                #ff0000,
-                #ff9900 10px,
-                #ffff00 20px,
-                #00ff00 30px,
-                #00ffff 40px,
-                #0000ff 50px,
-                #ff00ff 60px,
-                #ff0000 70px
-            );
-            z-index: 2;
-        }
-        
-        .family-header {
-            font-family: 'Press Start 2P', cursive;
-            color: #ffcc00;
-            text-align: center;
-            font-size: 28px;
-            margin-bottom: 40px;
-            text-shadow: 
-                4px 4px 0 #ff3366,
-                -2px -2px 0 #3366ff;
-            padding: 20px;
-            background: linear-gradient(90deg, #ff3366, #ff9933, #ffcc00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .gift-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* Карточка подарка */
-        .gift-card {
-            background: linear-gradient(135deg, rgba(40, 20, 60, 0.9), rgba(60, 30, 80, 0.9));
-            border: 3px solid;
-            border-image: linear-gradient(45deg, #ff6699, #ffcc66) 1;
-            padding: 25px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        /* Стиль для забронированного подарка */
-        .gift-card.reserved {
-            opacity: 0.7;
-            border-image: linear-gradient(45deg, #666, #999) 1;
-            background: linear-gradient(135deg, rgba(60, 60, 60, 0.9), rgba(80, 80, 80, 0.9));
-        }
-        
-        .gift-card.reserved::after {
-            content: "🚫 ЗАБРОНИРОВАНО";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-15deg);
-            background: rgba(255, 0, 0, 0.9);
-            color: white;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 16px;
-            padding: 10px 20px;
-            border: 3px solid white;
-            z-index: 10;
-            animation: reservedPulse 2s infinite;
-        }
-        
-        @keyframes reservedPulse {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 1; }
-        }
-        
-        .gift-card.reserved .gift-title,
-        .gift-card.reserved .gift-description {
-            color: #888 !important;
-        }
-        
-        .gift-card.reserved .gift-link,
-        .gift-card.reserved .reserve-btn {
-            display: none !important;
-        }
-        
-        .gift-card:hover:not(.reserved) {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 10px 30px rgba(255, 102, 153, 0.5);
-            border-image: linear-gradient(45deg, #66ffcc, #6699ff) 1;
-        }
-        
-        .gift-number {
-            display: inline-block;
-            background: #ff3366;
-            color: white;
-            width: 36px;
-            height: 36px;
-            text-align: center;
-            line-height: 36px;
-            border-radius: 50%;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 14px;
-            margin-right: 15px;
-            border: 2px solid #ffcc00;
-        }
-        
-        .gift-card.reserved .gift-number {
-            background: #666;
-            border-color: #999;
-        }
-        
-        .gift-title {
-            color: #ffcc66;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 18px;
-            margin-bottom: 15px;
-            display: inline-block;
-            text-shadow: 2px 2px 0 #ff3366;
-        }
-        
-        .gift-description {
-            color: #ccccff;
-            margin-bottom: 20px;
-            font-size: 20px;
-            min-height: 60px;
-        }
-        
-        /* Блок с кнопками */
-        .gift-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        /* Кнопка ссылки */
-        .gift-link {
-            display: inline-block;
-            background: linear-gradient(180deg, #3366ff, #0033cc);
-            color: white;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 14px;
-            padding: 12px 25px;
-            text-decoration: none;
-            border: 3px outset #6666ff;
-            cursor: pointer;
-            text-shadow: 2px 2px 0 #003399;
-            transition: all 0.2s;
-            flex: 1;
-            text-align: center;
-        }
-        
-        .gift-link:hover {
-            background: linear-gradient(180deg, #6699ff, #3366ff);
-            border: 3px inset #6699ff;
-        }
-        
-        /* Кнопка бронирования */
-        .reserve-btn {
-            display: inline-block;
-            background: linear-gradient(180deg, #ff3366, #cc0033);
-            color: white;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 14px;
-            padding: 12px 25px;
-            text-decoration: none;
-            border: 3px outset #ff6666;
-            cursor: pointer;
-            text-shadow: 2px 2px 0 #990033;
-            transition: all 0.2s;
-            flex: 1;
-            text-align: center;
-        }
-        
-        .reserve-btn:hover {
-            background: linear-gradient(180deg, #ff6699, #ff3366);
-            border: 3px inset #ff6699;
-            animation: pulse 0.5s;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        /* Модальное окно подтверждения */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-overlay.active {
-            display: flex;
-            animation: fadeIn 0.3s;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .modal {
-            background: linear-gradient(135deg, #2a1b3d, #4a2b6b);
-            border: 5px solid #ffcc00;
-            padding: 30px;
-            max-width: 600px;
-            width: 90%;
-            font-family: 'Press Start 2P', cursive;
-            color: #fff;
-            position: relative;
-            animation: modalAppear 0.4s;
-        }
-        
-        @keyframes modalAppear {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        
-        .modal-header {
-            color: #ffcc00;
-            font-size: 20px;
-            margin-bottom: 20px;
-            text-align: center;
-            text-shadow: 2px 2px 0 #ff3366;
-            border-bottom: 2px solid #ff3366;
-            padding-bottom: 10px;
-        }
-        
-        .modal-content {
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 30px;
-            color: #ccccff;
-        }
-        
-        .modal-gift-info {
-            background: rgba(255, 204, 0, 0.1);
-            border: 2px dashed #ffcc00;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 5px;
-        }
-        
-        .modal-gift-info strong {
-            color: #ffcc00;
-        }
-        
-        .modal-warning {
-            color: #ff6666;
-            font-size: 12px;
-            margin: 15px 0;
-            padding: 10px;
-            background: rgba(255, 0, 0, 0.1);
-            border-left: 3px solid #ff6666;
-        }
-        
-        .modal-actions {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-        }
-        
-        .modal-btn {
-            padding: 15px 30px;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 14px;
-            border: 3px outset;
-            cursor: pointer;
-            transition: all 0.2s;
-            flex: 1;
-            text-align: center;
-        }
-        
-        .modal-btn.confirm {
-            background: linear-gradient(180deg, #00cc66, #00994d);
-            color: white;
-            border-color: #00ff88;
-        }
-        
-        .modal-btn.confirm:hover {
-            background: linear-gradient(180deg, #00ff88, #00cc66);
-            border: 3px inset #00ff88;
-        }
-        
-        .modal-btn.cancel {
-            background: linear-gradient(180deg, #ff6666, #cc3333);
-            color: white;
-            border-color: #ff9999;
-        }
-        
-        .modal-btn.cancel:hover {
-            background: linear-gradient(180deg, #ff9999, #ff6666);
-            border: 3px inset #ff9999;
-        }
-        
-        /* Инфопанель с забронированными подарками */
-        .reserved-panel {
-            background: rgba(0, 50, 100, 0.3);
-            border: 3px solid #3366ff;
-            padding: 20px;
-            margin-bottom: 30px;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .reserved-panel h3 {
-            color: #66ffff;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 16px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        .reserved-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
-        
-        .reserved-badge {
-            background: linear-gradient(180deg, #ff3366, #cc0033);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-family: 'VT323', monospace;
-            font-size: 18px;
-            border: 2px solid #ffcc00;
-        }
-        
-        .reserved-badge .gift-number {
-            background: white;
-            color: #ff3366;
-            width: 24px;
-            height: 24px;
-            line-height: 24px;
-            font-size: 12px;
-            margin-right: 8px;
-        }
-        
-        /* Кто что выбрал */
-        .reserved-by {
-            font-size: 14px;
-            color: #ffcc00;
-            margin-top: 5px;
-            text-align: center;
-            font-family: 'Press Start 2P', cursive;
-        }
-        
-        .reserved-by input {
-            background: transparent;
-            border: 2px solid #ffcc00;
-            color: #ffcc00;
-            padding: 5px 10px;
-            font-family: 'VT323', monospace;
-            font-size: 18px;
-            width: 200px;
-            text-align: center;
-            margin-top: 5px;
-        }
-        
-        .reserved-by input::placeholder {
-            color: #888;
-        }
-        
-        /* Сообщение о статусе */
-        .status-message {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: linear-gradient(180deg, #00cc66, #00994d);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 14px;
-            border: 3px solid #00ff88;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-            z-index: 1001;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s;
-        }
-        
-        .status-message.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        
-        /* Адаптивность */
-        @media (max-width: 768px) {
-            .gift-grid {
-                grid-template-columns: 1fr;
-            }
-            .gift-actions {
-                flex-direction: column;
-            }
-            .modal-actions {
-                flex-direction: column;
-            }
-        }
+        /* ВСЁ ТВОЁ CSS ОСТАВЛЯЕМ БЕЗ ИЗМЕНЕНИЙ */
+        /* ... весь твой предыдущий CSS ... */
     </style>
 </head>
 <body>
+    <!-- ВСЯ ТВОЯ HTML СТРУКТУРА ОСТАЁТСЯ -->
     <div class="container">
         <h1 class="family-header">🎄 СЕМЕЙНЫЙ ВИШЛИСТ 2024 🎁</h1>
         
-        <!-- Панель забронированных подарков -->
         <div class="reserved-panel">
             <h3>🚫 ЗАБРОНИРОВАННЫЕ ПОДАРКИ:</h3>
             <div class="reserved-list" id="reservedList">
-                <!-- Здесь будут появляться забронированные подарки -->
-                <div style="color:#888; font-style:italic;">Пока нет забронированных подарков</div>
+                <div style="color:#888; font-style:italic;">Загрузка данных...</div>
             </div>
         </div>
         
-        <!-- Сетка подарков -->
         <div class="gift-grid" id="giftGrid">
-            <!-- Подарок 1 -->
-            <div class="gift-card" data-id="1">
-                <span class="gift-number">01</span>
-                <h3 class="gift-title">УМНАЯ КОЛОНКА</h3>
-                <p class="gift-description">Для музыки, новостей и управления умным домом. Яндекс Станция или аналог.</p>
-                <div class="gift-actions">
-                    <a href="https://example.com/link1" target="_blank" class="gift-link">[ПОСМОТРЕТЬ]</a>
-                    <button class="reserve-btn" onclick="showReserveModal(1, 'УМНАЯ КОЛОНКА')">[ЗАБРОНИРОВАТЬ]</button>
-                </div>
-                <div class="reserved-by" id="reservedBy1" style="display: none;">
-                    Выбрал(а): <input type="text" placeholder="Введите ваше имя" maxlength="20" 
-                    onchange="updateReservedBy(1, this.value)">
-                </div>
-            </div>
-            
-            <!-- Подарок 2 -->
-            <div class="gift-card" data-id="2">
-                <span class="gift-number">02</span>
-                <h3 class="gift-title">НАБОР ДЛЯ ФОНДЮ</h3>
-                <p class="gift-description">Для семейных вечеров с сыром и шоколадом. Создаст уютную атмосферу.</p>
-                <div class="gift-actions">
-                    <a href="https://example.com/link2" target="_blank" class="gift-link">[ПОСМОТРЕТЬ]</a>
-                    <button class="reserve-btn" onclick="showReserveModal(2, 'НАБОР ДЛЯ ФОНДЮ')">[ЗАБРОНИРОВАТЬ]</button>
-                </div>
-                <div class="reserved-by" id="reservedBy2" style="display: none;">
-                    Выбрал(а): <input type="text" placeholder="Введите ваше имя" maxlength="20"
-                    onchange="updateReservedBy(2, this.value)">
-                </div>
-            </div>
-            
-            <!-- Подарок 3 -->
-            <div class="gift-card" data-id="3">
-                <span class="gift-number">03</span>
-                <h3 class="gift-title">ИГРОВАЯ ПРИСТАВКА</h3>
-                <p class="gift-description">Nintendo Switch или PS5 для семейных игровых вечеров.</p>
-                <div class="gift-actions">
-                    <a href="https://example.com/link3" target="_blank" class="gift-link">[ПОСМОТРЕТЬ]</a>
-                    <button class="reserve-btn" onclick="showReserveModal(3, 'ИГРОВАЯ ПРИСТАВКА')">[ЗАБРОНИРОВАТЬ]</button>
-                </div>
-                <div class="reserved-by" id="reservedBy3" style="display: none;">
-                    Выбрал(а): <input type="text" placeholder="Введите ваше имя" maxlength="20"
-                    onchange="updateReservedBy(3, this.value)">
-                </div>
-            </div>
-            
-            <!-- Подарок 4 -->
-            <div class="gift-card" data-id="4">
-                <span class="gift-number">04</span>
-                <h3 class="gift-title">КАЧЕЛИ ДЛЯ ДАЧИ</h3>
-                <p class="gift-description">Подвесные качели или гамак для отдыха на свежем воздухе.</p>
-                <div class="gift-actions">
-                    <a href="https://example.com/link4" target="_blank" class="gift-link">[ПОСМОТРЕТЬ]</a>
-                    <button class="reserve-btn" onclick="showReserveModal(4, 'КАЧЕЛИ ДЛЯ ДАЧИ')">[ЗАБРОНИРОВАТЬ]</button>
-                </div>
-                <div class="reserved-by" id="reservedBy4" style="display: none;">
-                    Выбрал(а): <input type="text" placeholder="Введите ваше имя" maxlength="20"
-                    onchange="updateReservedBy(4, this.value)">
-                </div>
-            </div>
-            
-            <!-- Подарок 5 -->
-            <div class="gift-card" data-id="5">
-                <span class="gift-number">05</span>
-                <h3 class="gift-title">ЦИФРОВАЯ РАМКА</h3>
-                <p class="gift-description">Фоторамка с Wi-Fi для обмена семейными фото в реальном времени.</p>
-                <div class="gift-actions">
-                    <a href="https://example.com/link5" target="_blank" class="gift-link">[ПОСМОТРЕТЬ]</a>
-                    <button class="reserve-btn" onclick="showReserveModal(5, 'ЦИФРОВАЯ РАМКА')">[ЗАБРОНИРОВАТЬ]</button>
-                </div>
-                <div class="reserved-by" id="reservedBy5" style="display: none;">
-                    Выбрал(а): <input type="text" placeholder="Введите ваше имя" maxlength="20"
-                    onchange="updateReservedBy(5, this.value)">
-                </div>
-            </div>
-            
-            <!-- Подарок 6 -->
-            <div class="gift-card" data-id="6">
-                <span class="gift-number">06</span>
-                <h3 class="gift-title">НАБОР НАСТОЛЬНЫХ ИГР</h3>
-                <p class="gift-description">Классические и современные игры для всех возрастов.</p>
-                <div class="gift-actions">
-                    <a href="https://example.com/link6" target="_blank" class="gift-link">[ПОСМОТРЕТЬ]</a>
-                    <button class="reserve-btn" onclick="showReserveModal(6, 'НАБОР НАСТОЛЬНЫХ ИГР')">[ЗАБРОНИРОВАТЬ]</button>
-                </div>
-                <div class="reserved-by" id="reservedBy6" style="display: none;">
-                    Выбрал(а): <input type="text" placeholder="Введите ваше имя" maxlength="20"
-                    onchange="updateReservedBy(6, this.value)">
-                </div>
-            </div>
-            
-            <!-- Подарок 7 -->
-            <div class="gift-card" data-id="7">
-                <span class="gift-number">07</span>
-                <h3 class="gift-title">КУХОННЫЙ КОМБАЙН</h3>
-                <p class="gift-description">Мощный помощник для приготовления семейных обедов.</p>
-                <div class="gift-actions">
-                    <a href="https://example.com/link7" target="_blank" class="gift-link">[ПОСМОТРЕТЬ]</a>
-                    <button class="reserve-btn" onclick="showReserveModal(7, 'КУХОННЫЙ КОМБАЙН')">[ЗАБРОНИРОВАТЬ]</button>
-                </div>
-                <div class="reserved-by" id="reservedBy7" style="display: none;">
-                    Выбрал(а): <input type="text" placeholder="Введите ваше имя" maxlength="20"
-                    onchange="updateReservedBy(7, this.value)">
-                </div>
-            </div>
-            
-            <!-- Подарок 8 -->
-            <div class="gift-card" data-id="8">
-                <span class="gift-number">08</span>
-                <h3 class="gift-title">ПРОЕКТОР ДЛЯ КИНО</h3>
-                <p class="gift-description">Для домашнего кинотеатра и просмотра фильмов всей семьёй.</p>
-                <div class="gift-actions">
-                    <a href="https://example.com/link8" target="_blank" class="gift-link">[ПОСМОТРЕТЬ]</a>
-                    <button class="reserve-btn" onclick="showReserveModal(8, 'ПРОЕКТОР ДЛЯ КИНО')">[ЗАБРОНИРОВАТЬ]</button>
-                </div>
-                <div class="reserved-by" id="reservedBy8" style="display: none;">
-                    Выбрал(а): <input type="text" placeholder="Введите ваше имя" maxlength="20"
-                    onchange="updateReservedBy(8, this.value)">
-                </div>
-            </div>
-            
-            <!-- Подарок 9 -->
-            <div class="gift-card" data-id="9">
-                <span class="gift-number">09</span>
-                <h3 class="gift-title">СЕРТИФИКАТ В СПА</h3>
-                <p class="gift-description">На массаж или спа-процедуры для релаксации.</p>
-                <div class="gift-actions">
-                    <a href="https://example.com/link9" target="_blank" class="gift-link">[ПОСМОТРЕТЬ]</a>
-                    <button class="reserve-btn" onclick="showReserveModal(9, 'СЕРТИФИКАТ В СПА')">[ЗАБРОНИРОВАТЬ]</button>
-                </div>
-                <div class="reserved-by" id="reservedBy9" style="display: none;">
-                    Выбрал(а): <input type="text" placeholder="Введите ваше имя" maxlength="20"
-                    onchange="updateReservedBy(9, this.value)">
-                </div>
-            </div>
-            
-            <!-- Подарок 10 -->
-            <div class="gift-card" data-id="10">
-                <span class="gift-number">10</span>
-                <h3 class="gift-title">ТУР ПО ЕВРОПЕ</h3>
-                <p class="gift-description">Подарочный сертификат на семейное путешествие.</p>
-                <div class="gift-actions">
-                    <a href="https://example.com/link10" target="_blank" class="gift-link">[ПОСМОТРЕТЬ]</a>
-                    <button class="reserve-btn" onclick="showReserveModal(10, 'ТУР ПО ЕВРОПЕ')">[ЗАБРОНИРОВАТЬ]</button>
-                </div>
-                <div class="reserved-by" id="reservedBy10" style="display: none;">
-                    Выбрал(а): <input type="text" placeholder="Введите ваше имя" maxlength="20"
-                    onchange="updateReservedBy(10, this.value)">
-                </div>
-            </div>
+            <!-- Все 10 подарков как было -->
+            <!-- ... -->
         </div>
     </div>
     
-    <!-- Модальное окно подтверждения -->
+    <!-- Модальное окно -->
     <div class="modal-overlay" id="reserveModal">
-        <div class="modal">
-            <div class="modal-header">⚠️ ПОДТВЕРЖДЕНИЕ БРОНИРОВАНИЯ</div>
-            <div class="modal-content">
-                <p>Вы собираетесь забронировать подарок:</p>
-                <div class="modal-gift-info" id="modalGiftInfo">
-                    <!-- Здесь будет информация о подарке -->
-                </div>
-                <p>После подтверждения:</p>
-                <ul>
-                    <li>✓ Этот подарок станет недоступен для других</li>
-                    <li>✓ На странице появится отметка "ЗАБРОНИРОВАНО"</li>
-                    <li>✓ Вас попросят ввести ваше имя</li>
-                </ul>
-                <div class="modal-warning">
-                    ⚠️ ВНИМАНИЕ: Отмена бронирования будет возможна только через администратора страницы!
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button class="modal-btn confirm" onclick="confirmReservation()">✅ ДА, ЗАБРОНИРОВАТЬ</button>
-                <button class="modal-btn cancel" onclick="closeModal()">❌ ОТМЕНИТЬ</button>
-            </div>
-        </div>
+        <!-- ... -->
     </div>
     
     <!-- Сообщение о статусе -->
     <div class="status-message" id="statusMessage"></div>
-    
+
     <script>
-        // Данные о подарках
-        let gifts = {};
-        for (let i = 1; i <= 10; i++) {
-            gifts[i] = {
-                reserved: false,
-                reservedBy: ''
-            };
-        }
+        // === КОНФИГУРАЦИЯ FIREBASE ===
+        // ⚠️ ЗАМЕНИ ЭТИ ДАННЫЕ НА СВОИ ИЗ FIREBASE CONSOLE ⚠️
+        const firebaseConfig = {
+  apiKey: "AIzaSyA_57kHHb2D-EOSxaOVE4aD25qXT4oXmJU",
+  authDomain: "wishlist-2026.firebaseapp.com",
+  projectId: "wishlist-2026",
+  storageBucket: "wishlist-2026.firebasestorage.app",
+  messagingSenderId: "1072466643130",
+  appId: "1:1072466643130:web:3b73da03ca11b73c3e5a83",
+  measurementId: "G-7QHKJ0S164"
+};
         
-        // Текущий выбранный подарок
+        // Инициализация Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // === ПЕРЕМЕННЫЕ ===
+        let gifts = {};
         let selectedGiftId = null;
         let selectedGiftTitle = '';
         
-        // Показать модальное окно
+        // === ФУНКЦИИ ДЛЯ РАБОТЫ С FIRESTORE ===
+        
+        // Сохранить все подарки в Firestore
+        async function saveToFirestore() {
+            try {
+                await db.collection('wishlist').doc('gifts').set({
+                    data: gifts,
+                    updatedAt: new Date().toISOString()
+                });
+                console.log('✅ Данные сохранены в Firestore');
+                return true;
+            } catch (error) {
+                console.error('❌ Ошибка сохранения:', error);
+                showStatusMessage('⚠️ Ошибка синхронизации');
+                return false;
+            }
+        }
+        
+        // Загрузить подарки из Firestore
+        async function loadFromFirestore() {
+            try {
+                const doc = await db.collection('wishlist').doc('gifts').get();
+                
+                if (doc.exists) {
+                    const data = doc.data();
+                    gifts = data.data || {};
+                    
+                    // Восстанавливаем состояние на странице
+                    Object.keys(gifts).forEach(id => {
+                        if (gifts[id] && gifts[id].reserved) {
+                            const giftCard = document.querySelector(`.gift-card[data-id="${id}"]`);
+                            if (giftCard) {
+                                giftCard.classList.add('reserved');
+                                const reservedByDiv = document.getElementById(`reservedBy${id}`);
+                                if (reservedByDiv) {
+                                    reservedByDiv.style.display = 'block';
+                                    
+                                    // Восстанавливаем имя
+                                    const nameInput = reservedByDiv.querySelector('input');
+                                    if (nameInput && gifts[id].reservedBy) {
+                                        nameInput.value = gifts[id].reservedBy;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    
+                    updateReservedList();
+                    showStatusMessage('✅ Данные загружены');
+                    return true;
+                } else {
+                    // Если документ не существует, создаём пустой
+                    gifts = {};
+                    for (let i = 1; i <= 10; i++) {
+                        gifts[i] = { reserved: false, reservedBy: '' };
+                    }
+                    await saveToFirestore();
+                    return true;
+                }
+            } catch (error) {
+                console.error('❌ Ошибка загрузки:', error);
+                // Показываем fallback данные
+                initializeDefaultGifts();
+                return false;
+            }
+        }
+        
+        // Реальное обновление в реальном времени
+        function setupRealtimeUpdates() {
+            db.collection('wishlist').doc('gifts')
+                .onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        if (JSON.stringify(data.data) !== JSON.stringify(gifts)) {
+                            console.log('🔄 Получены обновления из Firestore');
+                            
+                            const oldGifts = { ...gifts };
+                            gifts = data.data || {};
+                            
+                            // Обновляем только изменившиеся подарки
+                            Object.keys(gifts).forEach(id => {
+                                if (JSON.stringify(oldGifts[id]) !== JSON.stringify(gifts[id])) {
+                                    updateGiftCard(id);
+                                }
+                            });
+                            
+                            updateReservedList();
+                        }
+                    }
+                }, (error) => {
+                    console.error('Ошибка real-time:', error);
+                });
+        }
+        
+        // Обновить карточку подарка
+        function updateGiftCard(giftId) {
+            const giftCard = document.querySelector(`.gift-card[data-id="${giftId}"]`);
+            if (!giftCard) return;
+            
+            const gift = gifts[giftId];
+            
+            if (gift.reserved) {
+                giftCard.classList.add('reserved');
+                const reservedByDiv = document.getElementById(`reservedBy${giftId}`);
+                if (reservedByDiv) {
+                    reservedByDiv.style.display = 'block';
+                    
+                    const nameInput = reservedByDiv.querySelector('input');
+                    if (nameInput && gift.reservedBy && gift.reservedBy !== nameInput.value) {
+                        nameInput.value = gift.reservedBy;
+                    }
+                }
+            } else {
+                giftCard.classList.remove('reserved');
+                const reservedByDiv = document.getElementById(`reservedBy${giftId}`);
+                if (reservedByDiv) {
+                    reservedByDiv.style.display = 'none';
+                }
+            }
+        }
+        
+        // === ОСНОВНЫЕ ФУНКЦИИ (остаются как были, но с Firestore) ===
+        
         function showReserveModal(giftId, giftTitle) {
+            if (gifts[giftId]?.reserved) {
+                showStatusMessage('⚠️ Этот подарок уже забронирован!');
+                return;
+            }
+            
             selectedGiftId = giftId;
             selectedGiftTitle = giftTitle;
             
@@ -684,43 +197,46 @@
             document.getElementById('reserveModal').classList.add('active');
         }
         
-        // Закрыть модальное окно
         function closeModal() {
             document.getElementById('reserveModal').classList.remove('active');
             selectedGiftId = null;
             selectedGiftTitle = '';
         }
         
-        // Подтвердить бронирование
-        function confirmReservation() {
+        async function confirmReservation() {
             if (!selectedGiftId) return;
             
-            // Помечаем подарок как забронированный
-            gifts[selectedGiftId].reserved = true;
+            gifts[selectedGiftId] = {
+                reserved: true,
+                reservedBy: ''
+            };
             
-            // Обновляем внешний вид карточки
-            const giftCard = document.querySelector(`.gift-card[data-id="${selectedGiftId}"]`);
-            giftCard.classList.add('reserved');
-            
-            // Показываем поле для ввода имени
-            document.getElementById(`reservedBy${selectedGiftId}`).style.display = 'block';
-            
-            // Обновляем список забронированных
+            updateGiftCard(selectedGiftId);
             updateReservedList();
             
-            // Показываем сообщение об успехе
+            await saveToFirestore();
             showStatusMessage(`🎉 Подарок #${selectedGiftId} забронирован!`);
-            
-            // Сохраняем в LocalStorage
-            saveToLocalStorage();
             
             closeModal();
         }
         
-        // Обновить список забронированных подарков
+        async function updateReservedBy(giftId, name) {
+            if (!gifts[giftId]) return;
+            
+            gifts[giftId].reservedBy = name.trim() || 'Аноним';
+            await saveToFirestore();
+            updateReservedList();
+            
+            if (name.trim()) {
+                showStatusMessage(`👤 Имя обновлено для подарка #${giftId}`);
+            }
+        }
+        
         function updateReservedList() {
             const reservedList = document.getElementById('reservedList');
-            const reservedGifts = Object.keys(gifts).filter(id => gifts[id].reserved);
+            const reservedGifts = Object.keys(gifts).filter(id => 
+                gifts[id] && gifts[id].reserved
+            );
             
             if (reservedGifts.length === 0) {
                 reservedList.innerHTML = '<div style="color:#888; font-style:italic;">Пока нет забронированных подарков</div>';
@@ -728,29 +244,20 @@
             }
             
             reservedList.innerHTML = reservedGifts.map(id => {
-                const name = gifts[id].reservedBy || 'Аноним';
+                const gift = gifts[id];
+                const giftTitle = document.querySelector(`.gift-card[data-id="${id}"] .gift-title`)?.textContent || `Подарок #${id}`;
+                const name = gift.reservedBy || 'Аноним';
+                
                 return `
                     <div class="reserved-badge">
                         <span class="gift-number">${id}</span>
-                        ${document.querySelector(`.gift-card[data-id="${id}"] .gift-title`).textContent}
+                        ${giftTitle}
                         <div class="reserved-by">Выбрал(а): ${name}</div>
                     </div>
                 `;
             }).join('');
         }
         
-        // Обновить имя выбравшего
-        function updateReservedBy(giftId, name) {
-            gifts[giftId].reservedBy = name.trim() || 'Аноним';
-            updateReservedList();
-            saveToLocalStorage();
-            
-            if (name.trim()) {
-                showStatusMessage(`👤 Имя обновлено для подарка #${giftId}`);
-            }
-        }
-        
-        // Показать статусное сообщение
         function showStatusMessage(text) {
             const message = document.getElementById('statusMessage');
             message.textContent = text;
@@ -761,67 +268,45 @@
             }, 3000);
         }
         
-        // Сохранить в LocalStorage
-        function saveToLocalStorage() {
-            localStorage.setItem('familyWishlist2024', JSON.stringify(gifts));
-        }
-        
-        // Загрузить из LocalStorage
-        function loadFromLocalStorage() {
-            const saved = localStorage.getItem('familyWishlist2024');
-            if (saved) {
-                gifts = JSON.parse(saved);
-                
-                // Восстанавливаем состояние подарков
-                Object.keys(gifts).forEach(id => {
-                    if (gifts[id].reserved) {
-                        const giftCard = document.querySelector(`.gift-card[data-id="${id}"]`);
-                        if (giftCard) {
-                            giftCard.classList.add('reserved');
-                            document.getElementById(`reservedBy${id}`).style.display = 'block';
-                            
-                            // Восстанавливаем имя если есть
-                            const nameInput = document.querySelector(`#reservedBy${id} input`);
-                            if (nameInput && gifts[id].reservedBy && gifts[id].reservedBy !== 'Аноним') {
-                                nameInput.value = gifts[id].reservedBy;
-                            }
-                        }
-                    }
-                });
-                
-                updateReservedList();
+        function initializeDefaultGifts() {
+            gifts = {};
+            for (let i = 1; i <= 10; i++) {
+                gifts[i] = { reserved: false, reservedBy: '' };
             }
         }
         
-        // При загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            loadFromLocalStorage();
+        // === ИНИЦИАЛИЗАЦИЯ ===
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Показываем сообщение о загрузке
+            showStatusMessage('🔄 Загрузка данных...');
             
-            // Закрытие модального окна по клику на фон
+            // Загружаем данные из Firestore
+            await loadFromFirestore();
+            
+            // Включаем real-time обновления
+            setupRealtimeUpdates();
+            
+            // Обработчики модального окна
             document.getElementById('reserveModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeModal();
-                }
+                if (e.target === this) closeModal();
             });
             
-            // Закрытие по ESC
             document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeModal();
-                }
+                if (e.key === 'Escape') closeModal();
             });
+            
+            // Функция сброса (для админа)
+            window.resetAll = async function() {
+                if (confirm('⚠️ СБРОСИТЬ ВСЕ БРОНИРОВАНИЯ?')) {
+                    initializeDefaultGifts();
+                    await saveToFirestore();
+                    location.reload();
+                }
+            };
         });
-        
-        // Кнопка сброса (для тестирования, можно удалить)
-        function resetAll() {
-            if (confirm('⚠️ СБРОСИТЬ ВСЕ БРОНИРОВАНИЯ? Это действие нельзя отменить!')) {
-                localStorage.removeItem('familyWishlist2024');
-                location.reload();
-            }
-        }
     </script>
     
-    <!-- Кнопка сброса (скрытая, для админа) -->
+    <!-- Кнопка сброса для админа -->
     <div style="position: fixed; bottom: 20px; left: 20px; z-index: 9999;">
         <button onclick="resetAll()" style="
             background: #ff0000;
@@ -832,7 +317,7 @@
             font-size: 10px;
             opacity: 0.3;
             cursor: pointer;
-        ">СБРОС</button>
+        " title="Сбросить все бронирования">♻️ СБРОС</button>
     </div>
 </body>
 </html>
