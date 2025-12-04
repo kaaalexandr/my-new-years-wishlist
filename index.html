@@ -847,6 +847,302 @@
     visibility: visible;
     transform: translateX(-50%) translateY(-5px);
 }
+    /* Терминал в стиле 16-bit */
+.terminal-container {
+    background: #000;
+    border: 4px solid #0f0;
+    border-radius: 8px;
+    margin-top: 40px;
+    font-family: 'VT323', monospace;
+    color: #0f0;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 0 20px rgba(0, 255, 0, 0.5),
+        inset 0 0 20px rgba(0, 255, 0, 0.1);
+    z-index: 1;
+}
+
+.terminal-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
+    background-size: 10px 10px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.terminal-header {
+    background: linear-gradient(to right, #005500, #008800, #005500);
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #0f0;
+    position: relative;
+    z-index: 1;
+}
+
+.terminal-title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    color: #0f0;
+    text-shadow: 1px 1px 0 #000;
+    letter-spacing: 1px;
+}
+
+.terminal-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.control-btn {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.control-btn.close {
+    background: #ff5555;
+    color: #000;
+}
+
+.control-btn.minimize {
+    background: #ffaa00;
+    color: #000;
+}
+
+.control-btn.maximize {
+    background: #00aa00;
+    color: #000;
+}
+
+.control-btn:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 5px currentColor;
+}
+
+.terminal-body {
+    padding: 20px;
+    min-height: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* Стили для скроллбара */
+.terminal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.terminal-body::-webkit-scrollbar-track {
+    background: #002200;
+}
+
+.terminal-body::-webkit-scrollbar-thumb {
+    background: #00aa00;
+    border-radius: 4px;
+}
+
+.terminal-body::-webkit-scrollbar-thumb:hover {
+    background: #00ff00;
+}
+
+.terminal-output {
+    margin-bottom: 15px;
+}
+
+.terminal-line {
+    font-size: 18px;
+    line-height: 1.4;
+    margin-bottom: 5px;
+    animation: typewriter 0.1s steps(1);
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+@keyframes typewriter {
+    from { opacity: 0.5; }
+    to { opacity: 1; }
+}
+
+.status-ok {
+    color: #0f0;
+    font-weight: bold;
+    animation: statusPulse 2s infinite;
+}
+
+.status-active {
+    color: #ff0;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 255, 0, 0.5);
+}
+
+@keyframes statusPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.terminal-input-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+.prompt {
+    color: #0f0;
+    font-size: 18px;
+    white-space: nowrap;
+}
+
+.terminal-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #0f0;
+    color: #0f0;
+    font-family: 'VT323', monospace;
+    font-size: 18px;
+    flex: 1;
+    padding: 5px 0;
+    outline: none;
+    caret-color: #0f0;
+}
+
+.terminal-input::placeholder {
+    color: #008800;
+    opacity: 0.7;
+}
+
+.terminal-input:focus {
+    border-bottom-color: #0f0;
+    box-shadow: 0 1px 0 0 rgba(0, 255, 0, 0.5);
+}
+
+#terminalCursor {
+    animation: cursorBlink 1s infinite;
+    color: #0f0;
+    font-size: 18px;
+}
+
+@keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.terminal-footer {
+    background: rgba(0, 85, 0, 0.8);
+    padding: 8px 15px;
+    display: flex;
+    justify-content: space-around;
+    border-top: 2px solid #0f0;
+    position: relative;
+    z-index: 1;
+}
+
+.footer-item {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    color: #0f0;
+    opacity: 0.8;
+    transition: all 0.3s;
+}
+
+.footer-item:hover {
+    opacity: 1;
+    text-shadow: 0 0 5px #0f0;
+    cursor: pointer;
+}
+
+/* Классы для разных типов сообщений */
+.line-info {
+    color: #0ff;
+}
+
+.line-warning {
+    color: #ff0;
+}
+
+.line-error {
+    color: #f00;
+}
+
+.line-success {
+    color: #0f0;
+}
+
+.line-system {
+    color: #aaa;
+    font-style: italic;
+}
+
+/* Эффект сканирования для терминала */
+.scan-line-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(180deg, 
+        transparent, 
+        rgba(0, 255, 0, 0.8), 
+        transparent);
+    animation: scan 3s linear infinite;
+    pointer-events: none;
+    z-index: 2;
+}
+
+@keyframes scan {
+    0% { top: 0; }
+    100% { top: 100%; }
+}
+
+/* Адаптивность терминала */
+@media (max-width: 768px) {
+    .terminal-container {
+        margin-top: 30px;
+    }
+    
+    .terminal-title {
+        font-size: 10px;
+    }
+    
+    .terminal-line {
+        font-size: 16px;
+    }
+    
+    .prompt, .terminal-input, #terminalCursor {
+        font-size: 16px;
+    }
+    
+    .footer-item {
+        font-size: 8px;
+    }
+    
+    .terminal-controls {
+        gap: 5px;
+    }
+    
+    .control-btn {
+        width: 10px;
+        height: 10px;
+        font-size: 6px;
+    }
+}    
     </style>
 </head>
 <body>
@@ -1069,6 +1365,46 @@
                 <div class="reserved-by" id="reservedBy10" style="display: none;">
                     Выбрал(а): <input type="text" placeholder="Введите ваше имя" maxlength="20" onchange="updateReservedBy(10, this.value)">
                 </div>
+            </div>
+        </div>
+        <!-- Терминал в стиле 16-bit -->
+        <div class="terminal-container">
+            <div class="terminal-header">
+                <div class="terminal-title">╔═══ СИСТЕМНЫЙ ТЕРМИНАЛ ═══╗</div>
+                <div class="terminal-controls">
+                    <span class="control-btn close">⬤</span>
+                    <span class="control-btn minimize">🗕</span>
+                    <span class="control-btn maximize">🗖</span>
+                </div>
+            </div>
+            
+            <div class="terminal-body">
+                <div class="terminal-output" id="terminalOutput">
+                    <div class="terminal-line">> ИНИЦИАЛИЗАЦИЯ СИСТЕМЫ "СЕМЕЙНЫЙ_ВИШЛИСТ_2024.EXE"</div>
+                    <div class="terminal-line">> ЗАГРУЖЕНЫ ДАННЫЕ: 10 ПОТЕНЦИАЛЬНЫХ ПОДАРКОВ</div>
+                    <div class="terminal-line">> СТАТУС БАЗЫ ДАННЫХ: <span class="status-ok">ОПЕРАТИВНА</span></div>
+                    <div class="terminal-line">> РЕЖИМ БРОНИРОВАНИЯ: <span class="status-active">АКТИВИРОВАН</span></div>
+                    <div class="terminal-line">> ОЖИДАНИЕ КОМАНД ОТ ПОЛЬЗОВАТЕЛЕЙ...</div>
+                    <div class="terminal-line">> НАПОМИНАНИЕ: КАЖДЫЙ ПОДАРОК МОЖЕТ ЗАНЯТЬ ТОЛЬКО 1 ЧЕЛОВЕК</div>
+                </div>
+                
+                <div class="terminal-input-line">
+                    <span class="prompt">C:\family\wishlist></span>
+                    <input type="text" 
+                           class="terminal-input" 
+                           id="terminalInput" 
+                           placeholder="Введите HELP для списка команд"
+                           maxlength="50">
+                    <span class="cursor" id="terminalCursor">█</span>
+                </div>
+            </div>
+            
+            <div class="terminal-footer">
+                <span class="footer-item">F1=ПОМОЩЬ</span>
+                <span class="footer-item">F2=СТАТУС</span>
+                <span class="footer-item">F3=СПИСОК</span>
+                <span class="footer-item">F5=ОБНОВИТЬ</span>
+                <span class="footer-item">ESC=ОЧИСТИТЬ</span>
             </div>
         </div>
     </div>
@@ -1431,9 +1767,280 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }, 3000);
 });
+        // Терминал - функциональность
+document.addEventListener('DOMContentLoaded', function() {
+    const terminalInput = document.getElementById('terminalInput');
+    const terminalOutput = document.getElementById('terminalOutput');
+    const terminalCursor = document.getElementById('terminalCursor');
+    
+    if (!terminalInput) return;
+    
+    // Команды терминала
+    const commands = {
+        'HELP': {
+            description: 'Показать список доступных команд',
+            execute: () => {
+                addTerminalLine('> ДОСТУПНЫЕ КОМАНДЫ:', 'info');
+                addTerminalLine('  HELP - эта справка', 'system');
+                addTerminalLine('  STATUS - статус системы', 'system');
+                addTerminalLine('  LIST - список подарков', 'system');
+                addTerminalLine('  RESERVED - забронированные', 'system');
+                addTerminalLine('  CLEAR - очистить терминал', 'system');
+                addTerminalLine('  WHOAMI - информация о пользователе', 'system');
+                addTerminalLine('  SANTA - секретная команда 🎅', 'system');
+            }
+        },
+        'STATUS': {
+            description: 'Статус системы',
+            execute: () => {
+                const reservedCount = Object.keys(gifts).filter(id => gifts[id]?.reserved).length;
+                const availableCount = 10 - reservedCount;
+                
+                addTerminalLine('> СТАТУС СИСТЕМЫ:', 'info');
+                addTerminalLine(`  Всего подарков: 10`, 'system');
+                addTerminalLine(`  Забронировано: ${reservedCount}`, reservedCount > 0 ? 'warning' : 'success');
+                addTerminalLine(`  Доступно: ${availableCount}`, availableCount > 0 ? 'success' : 'error');
+                addTerminalLine(`  База данных: ${Object.keys(gifts).length > 0 ? 'ОК' : 'ОШИБКА'}`, 'system');
+                addTerminalLine(`  Синхронизация: АКТИВНА`, 'success');
+            }
+        },
+        'LIST': {
+            description: 'Список всех подарков',
+            execute: () => {
+                addTerminalLine('> СПИСОК ПОДАРКОВ:', 'info');
+                for (let i = 1; i <= 10; i++) {
+                    const gift = gifts[i];
+                    const title = document.querySelector(`.gift-card[data-id="${i}"] .gift-title`)?.textContent || `Подарок ${i}`;
+                    const status = gift?.reserved ? '🚫 ЗАНЯТ' : '✅ СВОБОДЕН';
+                    const color = gift?.reserved ? 'warning' : 'success';
+                    addTerminalLine(`  ${i.toString().padStart(2, '0')}. ${title} - ${status}`, color);
+                }
+            }
+        },
+        'RESERVED': {
+            description: 'Список забронированных подарков',
+            execute: () => {
+                const reserved = Object.keys(gifts).filter(id => gifts[id]?.reserved);
+                
+                if (reserved.length === 0) {
+                    addTerminalLine('> ЗАБРОНИРОВАННЫХ ПОДАРКОВ НЕТ', 'info');
+                } else {
+                    addTerminalLine('> ЗАБРОНИРОВАННЫЕ ПОДАРКИ:', 'info');
+                    reserved.forEach(id => {
+                        const gift = gifts[id];
+                        const title = document.querySelector(`.gift-card[data-id="${id}"] .gift-title`)?.textContent || `Подарок ${id}`;
+                        const by = gift.reservedBy || 'Аноним';
+                        addTerminalLine(`  #${id}: ${title} (${by})`, 'warning');
+                    });
+                }
+            }
+        },
+        'CLEAR': {
+            description: 'Очистить терминал',
+            execute: () => {
+                terminalOutput.innerHTML = '';
+                addTerminalLine('> ТЕРМИНАЛ ОЧИЩЕН', 'success');
+                addTerminalLine('> СИСТЕМА ГОТОВА К РАБОТЕ', 'info');
+            }
+        },
+        'WHOAMI': {
+            description: 'Информация о пользователе',
+            execute: () => {
+                const userAgent = navigator.userAgent;
+                const isMobile = /Mobi|Android/i.test(userAgent);
+                const browser = getBrowserName();
+                
+                addTerminalLine('> ИНФОРМАЦИЯ О ПОЛЬЗОВАТЕЛЕ:', 'info');
+                addTerminalLine(`  Устройство: ${isMobile ? 'Мобильное' : 'Десктоп'}`, 'system');
+                addTerminalLine(`  Браузер: ${browser}`, 'system');
+                addTerminalLine(`  Время: ${new Date().toLocaleTimeString()}`, 'system');
+                addTerminalLine(`  Дата: ${new Date().toLocaleDateString()}`, 'system');
+                addTerminalLine(`  Язык: ${navigator.language}`, 'system');
+            }
+        },
+        'SANTA': {
+            description: 'Секретная команда 🎅',
+            execute: () => {
+                addTerminalLine('> 🎅 СЕКРЕТНАЯ КОМАНДА АКТИВИРОВАНА!', 'success');
+                addTerminalLine('> ДЕД МОРОЗ ПРИБЫВАЕТ ЧЕРЕЗ:', 'info');
+                
+                const now = new Date();
+                const christmas = new Date(now.getFullYear(), 11, 25); // 25 декабря
+                if (now > christmas) {
+                    christmas.setFullYear(christmas.getFullYear() + 1);
+                }
+                
+                const diff = christmas - now;
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                
+                addTerminalLine(`  ${days} дней ${hours} часов`, 'warning');
+                addTerminalLine('> 🎄 С НАСТУПАЮЩИМ НОВЫМ ГОДОМ! 🎁', 'success');
+                
+                // Специальный эффект
+                document.querySelectorAll('.gift-card').forEach(card => {
+                    card.style.boxShadow = '0 0 20px rgba(255, 0, 0, 0.5)';
+                    setTimeout(() => {
+                        card.style.boxShadow = '';
+                    }, 2000);
+                });
+                
+                showStatusMessage('🎅 Хо-хо-хо! Счастливого Рождества!');
+            }
+        }
+    };
+    
+    // Вспомогательная функция для определения браузера
+    function getBrowserName() {
+        const ua = navigator.userAgent;
+        if (ua.includes('Chrome')) return 'Chrome';
+        if (ua.includes('Firefox')) return 'Firefox';
+        if (ua.includes('Safari')) return 'Safari';
+        if (ua.includes('Edge')) return 'Edge';
+        return 'Неизвестный';
+    }
+    
+    // Добавить строку в терминал
+    function addTerminalLine(text, type = 'normal') {
+        const line = document.createElement('div');
+        line.className = `terminal-line line-${type}`;
+        line.textContent = text;
+        
+        // Анимация печатания
+        line.style.opacity = '0';
+        terminalOutput.appendChild(line);
+        
+        setTimeout(() => {
+            line.style.transition = 'opacity 0.3s';
+            line.style.opacity = '1';
+        }, 10);
+        
+        // Автоскролл вниз
+        setTimeout(() => {
+            terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }, 50);
+    }
+    
+    // Обработка ввода команды
+    function processCommand(cmd) {
+        const upperCmd = cmd.trim().toUpperCase();
+        
+        if (!upperCmd) {
+            addTerminalLine('> ОШИБКА: Команда не может быть пустой', 'error');
+            return;
+        }
+        
+        // Показываем введённую команду
+        addTerminalLine(`C:\\family\\wishlist> ${cmd}`, 'system');
+        
+        // Выполняем команду
+        if (commands[upperCmd]) {
+            commands[upperCmd].execute();
+        } else {
+            addTerminalLine(`> ОШИБКА: Неизвестная команда "${cmd}"`, 'error');
+            addTerminalLine('> Введите HELP для списка команд', 'info');
+        }
+    }
+    
+    // Обработчик ввода
+    terminalInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const cmd = this.value;
+            this.value = '';
+            
+            if (cmd.trim()) {
+                processCommand(cmd);
+            }
+        }
+    });
+    
+    // Функциональность кнопок управления
+    document.querySelectorAll('.control-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const action = this.classList.contains('close') ? 'close' : 
+                          this.classList.contains('minimize') ? 'minimize' : 'maximize';
+            
+            addTerminalLine(`> КНОПКА "${action.toUpperCase()}" НАЖАТА`, 'info');
+            
+            switch(action) {
+                case 'close':
+                    addTerminalLine('> ТЕРМИНАЛ ЗАКРЫТЬ НЕЛЬЗЯ - СИСТЕМА КРИТИЧЕСКАЯ', 'error');
+                    break;
+                case 'minimize':
+                    document.querySelector('.terminal-body').style.display = 
+                        document.querySelector('.terminal-body').style.display === 'none' ? 'block' : 'none';
+                    addTerminalLine('> ТЕРМИНАЛ СВЁРНУТ/РАЗВЁРНУТ', 'warning');
+                    break;
+                case 'maximize':
+                    document.querySelector('.terminal-container').classList.toggle('maximized');
+                    addTerminalLine('> РЕЖИМ ПОЛНОГО ЭКРАНА ПЕРЕКЛЮЧЕН', 'warning');
+                    break;
+            }
+        });
+    });
+    
+    // Функциональность кнопок в футере
+    document.querySelectorAll('.footer-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const text = this.textContent;
+            
+            if (text.includes('F1')) {
+                processCommand('HELP');
+            } else if (text.includes('F2')) {
+                processCommand('STATUS');
+            } else if (text.includes('F3')) {
+                processCommand('LIST');
+            } else if (text.includes('F5')) {
+                location.reload();
+            } else if (text.includes('ESC')) {
+                processCommand('CLEAR');
+            }
+        });
+    });
+    
+    // Случайные системные сообщения
+    const systemMessages = [
+        "> СИСТЕМА СКАНИРУЕТ НА ПРЕДМЕТ ОШИБОК...",
+        "> СОЕДИНЕНИЕ С БАЗОЙ ДАННЫХ УСТАНОВЛЕНО",
+        "> ВСЕ ПОДАРКИ ПРОШЛИ ПРОВЕРКУ НА ПРИГОДНОСТЬ",
+        "> РЕЖИМ ОБМЕНА ДАННЫМИ: АКТИВЕН",
+        "> ДЕД МОРОЗ В КУРСЕ ВАШИХ ВЫБОРОВ 🎅",
+        "> УРОВЕНЬ ПРАЗДНИЧНОСТИ: 95% И РАСТЁТ",
+        "> СЕКРЕТНЫЕ КОМАНДЫ ДОСТУПНЫ ДЛЯ АКТИВАЦИИ"
+    ];
+    
+    // Периодические сообщения
+    let messageIndex = 0;
+    setInterval(() => {
+        if (Math.random() > 0.7 && terminalOutput.children.length < 15) {
+            addTerminalLine(systemMessages[messageIndex % systemMessages.length], 'system');
+            messageIndex++;
+        }
+    }, 10000); // Каждые 10 секунд
+    
+    // Автофокус на инпут при клике на терминал
+    terminalInput.addEventListener('focus', function() {
+        terminalCursor.style.animation = 'none';
+        setTimeout(() => {
+            terminalCursor.style.animation = '';
+        }, 100);
+    });
+    
+    // Эффект сканирования
+    const scanLine = document.createElement('div');
+    scanLine.className = 'scan-line-effect';
+    document.querySelector('.terminal-container').appendChild(scanLine);
+    
+    // Инициализация
+    setTimeout(() => {
+        addTerminalLine('> ТЕРМИНАЛ ГОТОВ К РАБОТЕ', 'success');
+        addTerminalLine('> ВВЕДИТЕ HELP ДЛЯ СПИСКА КОМАНД', 'info');
+    }, 1000);
+});
     </script>
 </body>
 </html>
+
 
 
 
